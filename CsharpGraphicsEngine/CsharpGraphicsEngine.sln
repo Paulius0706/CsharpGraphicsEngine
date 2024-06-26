@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpGraphicsEngine", "CsharpGraphicsEngine.csproj", "{3287E5F3-60DE-4607-9B91-D91CCE7DF494}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenGLAbstraction.Core", "..\OpenGLAbstraction.Core\OpenGLAbstraction.Core.csproj", "{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3287E5F3-60DE-4607-9B91-D91CCE7DF494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3287E5F3-60DE-4607-9B91-D91CCE7DF494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3287E5F3-60DE-4607-9B91-D91CCE7DF494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3287E5F3-60DE-4607-9B91-D91CCE7DF494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73FCFE4A-BC89-4A44-A1E4-41346CEC11D1}
+	EndGlobalSection
+EndGlobal
