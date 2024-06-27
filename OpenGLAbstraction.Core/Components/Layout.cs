@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Components
 {
-    internal class Layout<Atributes, Uniforms> where Atributes : struct where Uniforms : struct
+    public class Layout<Atributes, Uniforms> where Atributes : struct where  Uniforms : struct
     {
         public const int MinVertexCount = 1;
         public const int MaxVertexCount = 100_000;
@@ -31,7 +31,10 @@ namespace OpenGLAbstraction.Core.Components
 
             VertexArrayHandle = GL.GenVertexArray();
             VertexBufferHandle = GL.GenBuffer();
-            IndexBufferHandle = GL.GenBuffer();
+            if (IndexBufferCount != 0)
+            {
+                IndexBufferHandle = GL.GenBuffer();
+            }
 
             GL.BindVertexArray(VertexArrayHandle);
 
@@ -61,6 +64,17 @@ namespace OpenGLAbstraction.Core.Components
         public void UnUse()
         {
             GL.BindVertexArray(0);
+        }
+        public void Render()
+        {
+            if (IndexBufferCount != 0)
+            {
+                GL.DrawElements(PrimitiveType.Triangles, IndexBufferCount, DrawElementsType.UnsignedInt, 0);
+            }
+            else
+            {
+                GL.DrawArrays(PrimitiveType.Triangles, 0, VertexBufferCount);
+            }
         }
 
         private void AssignAtributes()

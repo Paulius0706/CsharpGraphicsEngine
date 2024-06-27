@@ -63,13 +63,15 @@ namespace OpenGLAbstraction.Core.Components
             shaderUniforms = CreateUniformList();
             shaderAttributes = CreateAtributeList();
 
-            CheckGenericVertexAtributesBinds();
+            CheckGenericAtributesWithGLSL();
+            CheckGenericUniformsWithGLSL();
 
         }
         ~Shader()
         {
             Dispose();
         }
+        
 
         public void Dispose()
         {
@@ -84,10 +86,18 @@ namespace OpenGLAbstraction.Core.Components
 
             GC.SuppressFinalize(this);
         }
+
         public IReadOnlyCollection<ShaderUniform> ShaderUniforms => shaderUniforms;
         public IReadOnlyCollection<ShaderAttribute> ShaderAttributes => shaderAttributes;
 
-
+        public void Use()
+        {
+            GL.UseProgram(ShaderProgramHandle);
+        }
+        public void UnUse()
+        {
+            GL.UseProgram(0);
+        }
 
         public void SetUniform(string name, int value)
         {
@@ -227,7 +237,7 @@ namespace OpenGLAbstraction.Core.Components
             return shaderAttributes;
         }
 
-        private void CheckGenericVertexAtributesBinds()
+        private void CheckGenericAtributesWithGLSL()
         {
             List<string> Error = new List<string>();
 
@@ -254,6 +264,7 @@ namespace OpenGLAbstraction.Core.Components
                     case ActiveAttribType.FloatVec4:
                         atribType = typeof(Vector4);
                         break;
+                    default: throw new Exception();
                 }
 
                 if(!vertexStructFields.Any(o => o.Name == attrib.Name))
@@ -283,6 +294,75 @@ namespace OpenGLAbstraction.Core.Components
                     continue;
                 }
             }
+            if(Error.Count > 0)
+            {
+                throw new Exception("Shader Layout<->GenericAtribute not match\n" + Error.Aggregate((o1, o2) => $"{o1}\n{o2}"));
+            }
         }
+        private void CheckGenericUniformsWithGLSL()
+        {
+            List<string> Error = new List<string>();
+
+            //Get UniformsStruct info
+            Type uniformStructType = typeof(Uniforms);
+            FieldInfo[] uniformStructFields = uniformStructType.GetFields();
+
+            foreach (ShaderUniform uniform in shaderUniforms)
+            {
+                Type shaderUniformType = null;
+                if(uniform.Type.ToString().Contains("Image") || uniform.Type.ToString().Contains("Sampler"))
+                {
+                    continue;
+                }
+                switch (uniform.Type)
+                {
+                    case ActiveUniformType.Float:
+                        shaderUniformType = typeof(float);
+                        break;
+                    case ActiveUniformType.FloatVec2:
+                        shaderUniformType = typeof(Vector2);
+                        break;
+                    case ActiveUniformType.FloatVec3:
+                        shaderUniformType = typeof(Vector3);
+                        break;
+                    case ActiveUniformType.FloatVec4:
+                        shaderUniformType = typeof(Vector4);
+                        break;
+                    case ActiveUniformType.FloatMat4:
+                        shaderUniformType = typeof(Matrix4);
+                        break;
+                    default: throw new Exception();
+                }
+
+                if (!uniformStructFields.Any(o => o.Name == uniform.Name))
+                {
+                    Error.Add($"Shader Uniform {shaderUniformType.Name} {uniform.Name}; is not present in shader generic struct {uniformStructType.Name}");
+                    continue;
+                }
+
+
+                //Addtional check in VertexStruct has same type as layoutField
+                FieldInfo uniformStructFieldMatch = uniformStructFields.FirstOrDefault(o => o.Name == uniform.Name);
+                if (uniformStructFieldMatch.FieldType != shaderUniformType)
+                {
+                    Error.Add($"Shader Uniform {shaderUniformType.Name} {uniform.Name} is not same type as shader generic struct {uniformStructType.Name}.{uniformStructFieldMatch.Name} type {uniformStructFieldMatch.FieldType.Name}");
+                    continue;
+                }
+            }
+            //Check if VertexStruct has no additional Fields from layoutFields
+            foreach (FieldInfo uniformStructField in uniformStructFields)
+            {
+                if (!shaderAttributes.Select(o => o.Name).Any(o => o == uniformStructField.Name))
+                {
+                    Error.Add($"Shader generic struct {uniformStructType.Name}.{uniformStructField.Name} not exist in shader uniform");
+                    continue;
+                }
+            }
+            if (Error.Count > 0)
+            {
+                throw new Exception("Shader Uniform<->GenericUniform not match\n" + Error.Aggregate((o1, o2) => $"{o1}\n{o2}"));
+            }
+        }
+
     }
 }

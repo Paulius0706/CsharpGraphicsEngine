@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="OpenTK.Mathematics" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenGLAbstraction.Core\OpenGLAbstraction.Core.csproj" />
   </ItemGroup>
 
 </Project>
