@@ -37,7 +37,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Render\UI\Layouts\" />
     <Folder Include="Render\UI\NodeObjects\" />
+    <Folder Include="Render\UI\Objects\" />
   </ItemGroup>
 
 </Project>

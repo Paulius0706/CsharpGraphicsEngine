@@ -32,6 +32,10 @@ namespace OpenGLAbstraction.Core.Components
             public readonly int LowerPixel;
             public readonly int LeftPixel;
             public readonly int RightPixel;
+            public readonly int Height;
+            public readonly int Width;
+            public readonly Vector2 Position;
+            public readonly Vector2 Size;
 
             public readonly int RealUpperPixel;
             public readonly int RealLowerPixel;
@@ -40,8 +44,9 @@ namespace OpenGLAbstraction.Core.Components
             
             public readonly int RealHeight;
             public readonly int RealWidth ;
-            public readonly int Height;
-            public readonly int Width;
+            public readonly Vector2 RealPosition;
+            public readonly Vector2 RealSize;
+
 
             public Letter(FontTexture fontTexture, char character, int upperPixel, int lowerPixel, int leftPixel, int rightPixel)
             {
@@ -54,12 +59,20 @@ namespace OpenGLAbstraction.Core.Components
 
                 Height = UpperPixel - LowerPixel + 1;
                 Width = RightPixel - LeftPixel + 1;
+                
                 RealUpperPixel = UpperPixel / FontTexture.Height;
                 RealLowerPixel = LowerPixel / FontTexture.Height;
                 RealLeftPixel = LeftPixel / FontTexture.Width;
                 RealRightPixel = RightPixel / FontTexture.Width;
+                
                 RealHeight = Height / FontTexture.Height;
                 RealWidth = Width / FontTexture.Width;
+
+                Position = new Vector2(LeftPixel, LowerPixel);
+                Size = new Vector2(Width, Height);
+
+                RealPosition = new Vector2(RealLeftPixel, RealLowerPixel);
+                RealSize = new Vector2(RealWidth, RealHeight);
             }
         }
 

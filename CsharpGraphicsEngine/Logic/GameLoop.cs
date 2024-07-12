@@ -1,4 +1,4 @@
-﻿using CsharpGameReforged.Render.UI.NodeObjects;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using CsharpGameReforged.Render.UI.Objects;
+using CsharpGameReforged.Render.UI;
 
 namespace CsharpGameReforged.Logic
 {
@@ -14,7 +15,7 @@ namespace CsharpGameReforged.Logic
         private bool _disposed = false;
         private bool firstFrame = true;
         public Thread LoopThread { get; private set; }
-        public Dictionary<string, TextLine> lines = new Dictionary<string, TextLine>();
+        public Dictionary<string, UITextLine> lines = new Dictionary<string, UITextLine>();
         public GameLoop() 
         {
             LoopThread = new Thread(new ThreadStart(Loop));
@@ -40,13 +41,12 @@ namespace CsharpGameReforged.Logic
                 Update();
             }
         }
-        LetterNode node;
         public virtual void Load()
         {
             //!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-            lines["3"] = new TextLine(Program.Window.UIShaderNode.BasicTextureNode.QuadNode, "abcdefghijklmnopqrstuvwxyz", new Vector2(50, 150), 50);
-            lines["2"] = new TextLine(Program.Window.UIShaderNode.BasicTextureNode.QuadNode, "abcdefghijklmnopqrstuvw", new Vector2(50, 100), 50);
-            lines["1"] = new TextLine(Program.Window.UIShaderNode.BasicTextureNode.QuadNode, "Hello World!", new Vector2(50, 50), 50);
+            lines["3"] = new UITextLine("abcdefghijklmnopqrstuvwxyz", new Vector2(50, 150), 50);
+            lines["2"] = new UITextLine("abcdefghijklmnopqrstuvw", new Vector2(50, 100), 50);
+            lines["1"] = new UITextLine("Hello World!", new Vector2(50, 50), 50);
 
 
         }

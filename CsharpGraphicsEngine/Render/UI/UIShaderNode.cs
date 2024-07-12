@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using CsharpGameReforged.Render.UI.Textures;
+using OpenGLAbstraction.Core.Nodes.Natives;
+using OpenGLAbstraction.Core.Nodes.Helpers;
 
 namespace CsharpGameReforged.Render.UI
 {
@@ -26,11 +28,13 @@ namespace CsharpGameReforged.Render.UI
     }
     public class UIShaderNode : AbstractShaderNode<UIAtributes, UIUniforms>
     {
-        public BasicTextureNode BasicTextureNode { get; set; }
+        public RenderNode<UIAtributes, UIUniforms> LettersRenderNode { get; private set; }
+
         public UIShaderNode(WindowNode parentWindow) : base(parentWindow) 
         {
             shader = new Shader<UIAtributes, UIUniforms>("Render/UI/UI.vert", "Render/UI/UI.frag");
-            BasicTextureNode = new BasicTextureNode(this);
+            var letterTexturenode = new TextureNode<UIAtributes, UIUniforms>(this, "Render/UI/Textures/output-seomagnifier(2).png");
+            LettersRenderNode = new LetterQuadNode<UIAtributes, UIUniforms>(letterTexturenode, (pos, uv) => new UIAtributes(pos, uv));
         }
         protected override void LoadStaticUniforms()
         {
