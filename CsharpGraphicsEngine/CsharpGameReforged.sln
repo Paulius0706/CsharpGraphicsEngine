@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpGraphicsEngine", "CsharpGraphicsEngine.csproj", "{3287E5F3-60DE-4607-9B91-D91CCE7DF494}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpGameReforged", "CsharpGameReforged.csproj", "{3287E5F3-60DE-4607-9B91-D91CCE7DF494}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533} = {DA8F9EEA-13EE-46B7-BDF4-D1B5578C1533}
 	EndProjectSection

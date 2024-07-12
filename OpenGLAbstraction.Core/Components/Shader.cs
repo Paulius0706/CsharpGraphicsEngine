@@ -45,7 +45,7 @@ namespace OpenGLAbstraction.Core.Components
         public readonly int VertexShaderHandle;
         public readonly int FragmentShaderHandle;
 
-        private readonly ShaderUniform[] shaderUniforms;
+        private readonly IReadOnlyDictionary<string, ShaderUniform> shaderUniforms;
         private readonly ShaderAttribute[] shaderAttributes;
 
 
@@ -87,7 +87,7 @@ namespace OpenGLAbstraction.Core.Components
             GC.SuppressFinalize(this);
         }
 
-        public IReadOnlyCollection<ShaderUniform> ShaderUniforms => shaderUniforms;
+        public IReadOnlyCollection<ShaderUniform> ShaderUniforms => shaderUniforms.Values.ToList();
         public IReadOnlyCollection<ShaderAttribute> ShaderAttributes => shaderAttributes;
 
         public void Use()
@@ -113,20 +113,12 @@ namespace OpenGLAbstraction.Core.Components
 
             GL.Uniform1(shaderUniform.Location, value);
         }
-
-        public void SetUniform(string name, float value1, float value2)
+        public void SetUniform(string name, Vector2 value)
         {
             if (!GetShaderUniform(name, out ShaderUniform shaderUniform)) { throw new ArgumentException("uniformName not found " + name); }
             if (shaderUniform.Type != ActiveUniformType.FloatVec2) { throw new ArgumentException("uniform is not floatVec2. it is " + shaderUniform.Type); }
 
-            GL.Uniform2(shaderUniform.Location, new Vector2((float)value1, (float)value2));
-        }
-        public void SetUniform(string name, float value1, float value2, float value3)
-        {
-            if (!GetShaderUniform(name, out ShaderUniform shaderUniform)) { throw new ArgumentException("uniformName not found " + name); }
-            if (shaderUniform.Type != ActiveUniformType.FloatVec3) { throw new ArgumentException("uniform is not floatVec3. it is " + shaderUniform.Type); }
-
-            GL.Uniform3(shaderUniform.Location, new Vector3((float)value1, (float)value2, (float)value3));
+            GL.Uniform2(shaderUniform.Location, value);
         }
         public void SetUniform(string name, Vector3 value)
         {
@@ -134,6 +126,13 @@ namespace OpenGLAbstraction.Core.Components
             if (shaderUniform.Type != ActiveUniformType.FloatVec3) { throw new ArgumentException("uniform is not floatVec3. it is " + shaderUniform.Type); }
 
             GL.Uniform3(shaderUniform.Location, value);
+        }
+        public void SetUniform(string name, Vector4 value)
+        {
+            if (!GetShaderUniform(name, out ShaderUniform shaderUniform)) { throw new ArgumentException("uniformName not found " + name); }
+            if (shaderUniform.Type != ActiveUniformType.FloatVec4) { throw new ArgumentException("uniform is not floatVec4. it is " + shaderUniform.Type); }
+
+            GL.Uniform4(shaderUniform.Location, value);
         }
         public void SetUniform(string name, ref Matrix4 value)
         {
@@ -144,22 +143,13 @@ namespace OpenGLAbstraction.Core.Components
         }
 
 
-        public bool GetShaderUniform(string name, out ShaderUniform shaderUniform)
+        private bool GetShaderUniform(string name, out ShaderUniform shaderUniform)
         {
-            for (int i = 0; i < shaderUniforms.Length; i++)
+            if (shaderUniforms.TryGetValue(name, out shaderUniform)) 
             {
-                if (shaderUniforms[i].Name == name) { shaderUniform = shaderUniforms[i]; return true; }
+                return true;
             }
             shaderUniform = new ShaderUniform();
-            return false;
-        }
-        public bool GetShaderAtribute(string name, out ShaderAttribute shaderUniform)
-        {
-            for (int i = 0; i < shaderUniforms.Length; i++)
-            {
-                if (shaderUniforms[i].Name == name) { shaderUniform = shaderAttributes[i]; return true; }
-            }
-            shaderUniform = new ShaderAttribute();
             return false;
         }
 
@@ -212,7 +202,7 @@ namespace OpenGLAbstraction.Core.Components
             return ShaderProgramHandle;
         }
 
-        private ShaderUniform[] CreateUniformList()
+        private Dictionary<string, ShaderUniform> CreateUniformList()
         {
             GL.GetProgram(ShaderProgramHandle, GetProgramParameterName.ActiveUniforms, out int uniformsCount);
             ShaderUniform[] shaderUniforms = new ShaderUniform[uniformsCount];
@@ -222,7 +212,7 @@ namespace OpenGLAbstraction.Core.Components
                 int location = GL.GetUniformLocation(ShaderProgramHandle, uniformName);
                 shaderUniforms[i] = new ShaderUniform(uniformName, location, activeUniformType);
             }
-            return shaderUniforms;
+            return shaderUniforms.ToDictionary(o => o.Name, o => o);
         }
         private ShaderAttribute[] CreateAtributeList()
         {
@@ -264,7 +254,7 @@ namespace OpenGLAbstraction.Core.Components
                     case ActiveAttribType.FloatVec4:
                         atribType = typeof(Vector4);
                         break;
-                    default: throw new Exception();
+                    default: throw new NotImplementedException();
                 }
 
                 if(!vertexStructFields.Any(o => o.Name == attrib.Name))
@@ -307,7 +297,7 @@ namespace OpenGLAbstraction.Core.Components
             Type uniformStructType = typeof(Uniforms);
             FieldInfo[] uniformStructFields = uniformStructType.GetFields();
 
-            foreach (ShaderUniform uniform in shaderUniforms)
+            foreach (ShaderUniform uniform in ShaderUniforms)
             {
                 Type shaderUniformType = null;
                 if(uniform.Type.ToString().Contains("Image") || uniform.Type.ToString().Contains("Sampler"))
@@ -352,7 +342,7 @@ namespace OpenGLAbstraction.Core.Components
             //Check if VertexStruct has no additional Fields from layoutFields
             foreach (FieldInfo uniformStructField in uniformStructFields)
             {
-                if (!shaderAttributes.Select(o => o.Name).Any(o => o == uniformStructField.Name))
+                if (!ShaderUniforms.Select(o => o.Name).Any(o => o == uniformStructField.Name))
                 {
                     Error.Add($"Shader generic struct {uniformStructType.Name}.{uniformStructField.Name} not exist in shader uniform");
                     continue;

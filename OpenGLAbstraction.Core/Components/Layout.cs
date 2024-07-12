@@ -99,31 +99,8 @@ namespace OpenGLAbstraction.Core.Components
 
                 GL.EnableVertexAttribArray(shaderAttribute.Location);
                 // if offset dont work use Marshal.OffsetOf(typeof(IMAGE_DOS_HEADER), "e_lfanew")
-                GL.VertexAttribPointer(shaderAttribute.Location, atribSize, VertexAttribPointerType.Float, false, Marshal.SizeOf<Atributes>(), FieldOffset<Atributes>(shaderAttribute.Name));
+                GL.VertexAttribPointer(shaderAttribute.Location, atribSize, VertexAttribPointerType.Float, false, Marshal.SizeOf<Atributes>(), Marshal.OffsetOf(typeof(Atributes), shaderAttribute.Name));
             }
-        }
-
-        private static int FieldOffset<T>(string fieldName)
-        {
-            if (typeof(T).IsValueType == false)
-            {
-                throw new ArgumentOutOfRangeException("T");
-            }
-            FieldInfo field = typeof(T).GetField(fieldName);
-            if (field == null)
-            {
-                throw new ArgumentOutOfRangeException($"fieldName offset for {typeof(T).Name} dont exist");
-            }
-            object[] attributes = field.GetCustomAttributes(
-                typeof(FieldOffsetAttribute),
-                true
-            );
-            if (attributes.Length == 0)
-            {
-                throw new ArgumentException($"fieldName offset for {typeof(T).Name} null exeption");
-            }
-            FieldOffsetAttribute fieldOffset = (FieldOffsetAttribute)attributes[0];
-            return fieldOffset.Value;
         }
 
 

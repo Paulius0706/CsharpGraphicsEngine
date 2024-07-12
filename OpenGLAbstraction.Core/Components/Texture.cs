@@ -11,8 +11,8 @@ namespace OpenGLAbstraction.Core.Components
     public class Texture : IDisposable
     {
         private readonly int textureHandle;
-        public readonly int textureWidth;
-        public readonly int textureHeight;
+        public readonly int Width;
+        public readonly int Height;
 
         private bool disposed;
 
@@ -22,13 +22,15 @@ namespace OpenGLAbstraction.Core.Components
             GL.BindTexture(TextureTarget.Texture2D, textureHandle);
             // stb_image loads from the top-left pixel, whereas OpenGL loads from the bottom-left, causing the texture to be flipped vertically.
             // This will correct that, making the texture display properly.
-            StbImage.stbi_set_flip_vertically_on_load(1);
+            //StbImage.stbi_set_flip_vertically_on_load(1);
 
             // Load the image.
             ImageResult image = ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha);
+            Width = image.Width;
+            Height = image.Height;
             ImageWarping(image);
-            textureWidth = image.Width;
-            textureHeight = image.Height;
+            Width = image.Width;
+            Height = image.Height;
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -40,7 +42,7 @@ namespace OpenGLAbstraction.Core.Components
         {
             Dispose();
         }
-        protected void ImageWarping(ImageResult image)
+        protected virtual void ImageWarping(ImageResult image)
         {
 
         }
