@@ -33,13 +33,12 @@ namespace CsharpGameReforged.Render.UI
         public UIShaderNode(WindowNode parentWindow) : base(parentWindow) 
         {
             shader = new Shader<UIAtributes, UIUniforms>("Render/UI/UI.vert", "Render/UI/UI.frag");
-            var letterTexturenode = new TextureNode<UIAtributes, UIUniforms>(this, "Render/UI/Textures/output-seomagnifier(2).png");
-            LettersRenderNode = new LetterQuadNode<UIAtributes, UIUniforms>(letterTexturenode, (pos, uv) => new UIAtributes(pos, uv));
+            var letterTexturenode = new LetterTextureNode<UIAtributes, UIUniforms>(this, "Render/UI/Textures/output-seomagnifier(2).png");
+            LettersRenderNode = new LetterLayoutNode<UIAtributes, UIUniforms>(letterTexturenode, (pos, uv) => new UIAtributes(pos, uv));
         }
         protected override void LoadStaticUniforms()
         {
             shader.SetUniform(nameof(StaticUniforms.WindowSize), new Vector2(Window.Size.X, Window.Size.Y));
-            //shader.SetUniform(nameof(StaticUniforms.TextureSize), new Vector2(1, 1));
         }
     }
 }

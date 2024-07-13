@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Nodes.Helpers
 {
-    public class LetterQuadNode<Atributes, Uniforms> : AbstractLayoutNode<Atributes, Uniforms> where Atributes : struct where Uniforms : struct
+    public class LetterLayoutNode<Atributes, Uniforms> : AbstractLayoutNode<Atributes, Uniforms> where Atributes : struct where Uniforms : struct
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="constructor">method to construct atribute with position and uv</param>
-        public LetterQuadNode(RenderNode<Atributes, Uniforms> parent, Func<Vector3,Vector2,Atributes> constructor) : base(parent)
+        public LetterLayoutNode(RenderNode<Atributes, Uniforms> parent, Func<Vector3,Vector2,Atributes> constructor) : base(parent)
         {
             layout = new Layout<Atributes, Uniforms>(Shader, new List<Atributes>()
             {

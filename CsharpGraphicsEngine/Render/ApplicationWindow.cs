@@ -12,7 +12,7 @@ namespace CsharpGameReforged.Render
 {
     public class ApplicationWindow : WindowNode
     {
-        public UIShaderNode UIShaderNode { get; set; }
+        public UIShaderNode UIRender { get; set; }
         public TextureNode<UIAtributes,UIUniforms> MainTextureNode { get; set; }
         public ApplicationWindow(string title) : base(title)
         {
@@ -21,7 +21,7 @@ namespace CsharpGameReforged.Render
 
         protected override void Load()
         {
-            UIShaderNode = new UIShaderNode(this);
+            UIRender = new UIShaderNode(this);
             //Nodes.Add(GeneratedId, UIShaderNode);
         }
     }

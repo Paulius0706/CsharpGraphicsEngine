@@ -13,7 +13,23 @@ namespace OpenGLAbstraction.Core.Nodes.Helpers
     {
         public char Character { get; private set; } = '#';
         public Vector2 Position { get; set; } = Vector2.Zero;
-        public Vector2 Size => new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize);
+
+        private Vector2 _size = Vector2.Zero;
+        public Vector2 Size { get { if (_size == Vector2.Zero) _size = new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize); return _size; } }
+
+        public Vector2 RealPosition
+        {
+            get
+            {
+                return new Vector2(Position.X/Window.Size.X, Position.Y/Window.Size.Y) * 2 - Vector2.One;
+            }
+            set
+            {
+                Position = value * Window.Size / 2 * new Vector2(Window.Size.X, Window.Size.Y) * 0.5f;
+            }
+        }
+        public Vector2 RealSize => Size / Window.Size * 2f;
+
         public int FontSize { get; private set; } = 20;
         public FontTexture FontTexture => (FontTexture)Texture;
 
@@ -22,9 +38,9 @@ namespace OpenGLAbstraction.Core.Nodes.Helpers
         public Vector2 UvSize => _letter.Size;
         public Vector2 RealUvPosition => _letter.RealPosition;
         public Vector2 RealUvSize => _letter.RealSize;
-        private TextLine<LetterNode<Atributes, Uniforms>, Atributes, Uniforms> _textLine;
+        private TextBox<LetterNode<Atributes, Uniforms>, Atributes, Uniforms> _textLine;
 
-        public LetterNode(RenderNode<Atributes, Uniforms> parent, TextLine<LetterNode<Atributes, Uniforms>,Atributes, Uniforms> textLine, char character, Vector2 position, int size) : base(parent)
+        public LetterNode(RenderNode<Atributes, Uniforms> parent, TextBox<LetterNode<Atributes, Uniforms>,Atributes, Uniforms> textLine, char character, Vector2 position, int size) : base(parent)
         {
             Character = character;
             Position = position;

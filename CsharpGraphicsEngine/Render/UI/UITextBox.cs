@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace CsharpGameReforged.Render.UI
 {
 
-    public class UITextLine : TextLine<LetterNode<UIAtributes, UIUniforms>, UIAtributes, UIUniforms>
+    public class UITextBox : TextBox<LetterNode<UIAtributes, UIUniforms>, UIAtributes, UIUniforms>
     {
-        protected override RenderNode<UIAtributes, UIUniforms> LettersRenderNode => Program.Window.UIShaderNode.LettersRenderNode;
-        public UITextLine(string text, Vector2 lowerleftPosition, int size) : base(text, lowerleftPosition, size)
+        protected override RenderNode<UIAtributes, UIUniforms> LettersRenderNode => Program.Window.UIRender.LettersRenderNode;
+        public UITextBox(string text, Vector2 lowerleftPosition, int size) : base(text, lowerleftPosition, size)
         {
         }
 
