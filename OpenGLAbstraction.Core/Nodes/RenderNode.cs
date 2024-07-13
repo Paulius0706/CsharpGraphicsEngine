@@ -154,6 +154,24 @@ namespace OpenGLAbstraction.Core.Nodes
 
             InternalDispose();
         }
+
+
+        public void ResizeUpdate()
+        {
+            InternalResizeUpdate();
+            if(this.nodes != null)
+            {
+                var nodes = this.nodes.ToArray();
+                foreach(var node in nodes)
+                {
+                    node.Value.ResizeUpdate();
+                }
+            }
+        }
+        protected virtual void InternalResizeUpdate()
+        {
+
+        }
         public void Dispose()
         {
             this.RecDispose();

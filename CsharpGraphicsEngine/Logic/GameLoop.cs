@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
+using OpenGLAbstraction.Core.Objects;
 using CsharpGameReforged.Render.UI.Objects;
 using CsharpGameReforged.Render.UI;
-
 namespace CsharpGameReforged.Logic
 {
     public class GameLoop : IDisposable
@@ -44,9 +44,12 @@ namespace CsharpGameReforged.Logic
         public virtual void Load()
         {
             //!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-            lines["3"] = new UITextBox("abcdefghijklmnopqrstuvwxyz", new Vector2(50, 150), 50);
-            lines["2"] = new UITextBox("abcdefghijklmnopqrstuvw", new Vector2(50, 100), 50);
-            lines["1"] = new UITextBox("Hello World!", new Vector2(50, 50), 50);
+            //lines["3"] = new UITextBox("abcdefghijklmnopqrstuvwxyz", new Vector2(50, 150), 50);
+            //lines["2"] = new UITextBox("abcdefghijklmnopqrstuvw", new Vector2(50, 100), 50);
+            //lines["1"] = new UITextBox("Hello World!", new Vector2(50, 50), 50);
+            lines["3"] = new UITextBox("abcdefghijklmnopqrstuvwxyz", new Transform2D(Program.Window, new Vector2(50,150)), 50);
+            lines["2"] = new UITextBox("abcdefghijklmnopqrstuvw", new Transform2D(Program.Window, new Vector2(50, 100)), 50);
+            lines["1"] = new UITextBox("Hello World!", new Transform2D(Program.Window, new Vector2(50, 50)), 50);
 
 
         }

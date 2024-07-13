@@ -15,17 +15,21 @@ namespace CsharpGameReforged.Render.UI.Objects
     {
         protected abstract RenderNode<Atributes, Uniforms> LettersRenderNode { get; }
         private List<Letter> letterNodes = new List<Letter>();
-        public readonly string text;
-        public TextBox(string text, PositionType positionType, PositionRelativeType positionReference, Vector2 lowerleftPosition, Vector2 size, int fontSize) 
+        public readonly string Text;
+        public readonly Transform2D Transform;
+        public TextBox(string text, Transform2D transform, int fontSize) 
         {
-            this.text = text;
+            this.Transform = transform;
+            this.Text = text;
             float offset = 0;
             foreach(var character in text)
             {
                 LettersRenderNode.NodeThreadAction(() =>
                 {
-                    Letter letterNode = (Letter)Activator.CreateInstance(typeof(Letter), new object[] { LettersRenderNode, this, character, lowerleftPosition + Vector2.UnitX * offset, fontSize });  //this.ConstructLetter(character, lowerleftPosition + Vector2.UnitX * offset, size);
-                    offset += letterNode.Size.X;
+                    Vector2 pixelPosition = Transform.PixelPostion + Vector2.UnitX * offset;
+                    Transform2D transform = new Transform2D(LettersRenderNode.Window, pixelPosition);
+                    Letter letterNode = (Letter)Activator.CreateInstance(typeof(Letter), new object[] { LettersRenderNode, this, character, transform, fontSize });  //this.ConstructLetter(character, lowerleftPosition + Vector2.UnitX * offset, size);
+                    offset += letterNode.Transform.PixelSize.X;
                     letterNodes.Add(letterNode);
                 });
             }

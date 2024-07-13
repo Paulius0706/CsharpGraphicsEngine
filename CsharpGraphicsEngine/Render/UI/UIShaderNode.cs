@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
-using CsharpGameReforged.Render.UI.Textures;
 using OpenGLAbstraction.Core.Nodes.Natives;
 using OpenGLAbstraction.Core.Nodes.Helpers;
 
@@ -21,8 +20,8 @@ namespace CsharpGameReforged.Render.UI
     }
     public struct UIUniforms
     {
-        public Vector2 WindowSize;
-        public Vector2 TextureSize;
+        //public Vector2 WindowSize;
+        //public Vector2 TextureSize;
         public Vector4 PositionSize;
         public Vector4 UVPositionSize;
     }
@@ -38,7 +37,7 @@ namespace CsharpGameReforged.Render.UI
         }
         protected override void LoadStaticUniforms()
         {
-            shader.SetUniform(nameof(StaticUniforms.WindowSize), new Vector2(Window.Size.X, Window.Size.Y));
+            //shader.SetUniform(nameof(StaticUniforms.WindowSize), new Vector2(Window.Size.X, Window.Size.Y));
         }
     }
 }

@@ -81,6 +81,11 @@ namespace OpenGLAbstraction.Core
         {
             base.OnFramebufferResize(args); 
             GL.Viewport(0, 0, args.Width, args.Height);
+            var nodes = this.Nodes.ToArray();
+            foreach (var node in nodes)
+            {
+                node.Value.ResizeUpdate();
+            }
         }
         public override void Dispose()
         {

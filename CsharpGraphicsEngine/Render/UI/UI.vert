@@ -13,21 +13,11 @@ out vec2 vUV;
 
 void main()
 {
-    
-    //vUV = aUV;// vec2(aUV.x, aUV.y);
-    //vUV = vec2(
-        //UVPositionSize.x/TextureSize.x + 
-        //aUV.x*UVPositionSize.z/TextureSize.x, 
-        //UVPositionSize.y/TextureSize.y + 
-        //aUV.y*UVPositionSize.w/TextureSize.y);
     vUV = vec2(
-        UVPositionSize.x/TextureSize.x + aUV.x*UVPositionSize.z/TextureSize.x, 
-        UVPositionSize.y/TextureSize.y + aUV.y*UVPositionSize.w/TextureSize.y);
-    //vColor = aColor;
-
+        UVPositionSize.x + aUV.x*UVPositionSize.z, 
+        UVPositionSize.y + aUV.y*UVPositionSize.w);
     gl_Position = vec4(
-        2*PositionSize.x/WindowSize.x - 1 + 2*aPosition.x*PositionSize.z/WindowSize.x, 
-        2*PositionSize.y/WindowSize.y - 1 + 2*aPosition.y*PositionSize.w/WindowSize.y,
+        PositionSize.x + aPosition.x*PositionSize.z, 
+        PositionSize.y + aPosition.y*PositionSize.w,
         aPosition.z,1);
-
 }  

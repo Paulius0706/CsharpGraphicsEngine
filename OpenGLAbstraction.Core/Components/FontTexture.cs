@@ -37,13 +37,13 @@ namespace OpenGLAbstraction.Core.Components
             public readonly Vector2 Position;
             public readonly Vector2 Size;
 
-            public readonly int RealUpperPixel;
-            public readonly int RealLowerPixel;
-            public readonly int RealLeftPixel;
-            public readonly int RealRightPixel;
+            public readonly float RealUpperPixel;
+            public readonly float RealLowerPixel;
+            public readonly float RealLeftPixel;
+            public readonly float RealRightPixel;
             
-            public readonly int RealHeight;
-            public readonly int RealWidth ;
+            public readonly float RealHeight;
+            public readonly float RealWidth;
             public readonly Vector2 RealPosition;
             public readonly Vector2 RealSize;
 
@@ -60,13 +60,13 @@ namespace OpenGLAbstraction.Core.Components
                 Height = UpperPixel - LowerPixel + 1;
                 Width = RightPixel - LeftPixel + 1;
                 
-                RealUpperPixel = UpperPixel / FontTexture.Height;
-                RealLowerPixel = LowerPixel / FontTexture.Height;
-                RealLeftPixel = LeftPixel / FontTexture.Width;
-                RealRightPixel = RightPixel / FontTexture.Width;
+                RealUpperPixel = (float)UpperPixel / (float)FontTexture.Height;
+                RealLowerPixel = (float)LowerPixel / (float)FontTexture.Height;
+                RealLeftPixel = (float)LeftPixel / (float)FontTexture.Width;
+                RealRightPixel = (float)RightPixel / (float)FontTexture.Width;
                 
-                RealHeight = Height / FontTexture.Height;
-                RealWidth = Width / FontTexture.Width;
+                RealHeight = (float)Height / (float)FontTexture.Height;
+                RealWidth = (float)Width / (float)FontTexture.Width;
 
                 Position = new Vector2(LeftPixel, LowerPixel);
                 Size = new Vector2(Width, Height);
