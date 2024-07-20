@@ -134,6 +134,13 @@ namespace OpenGLAbstraction.Core.Components
 
             GL.Uniform4(shaderUniform.Location, value);
         }
+        public void SetUniform(string name, Color4 value)
+        {
+            if (!GetShaderUniform(name, out ShaderUniform shaderUniform)) { throw new ArgumentException("uniformName not found " + name); }
+            if (shaderUniform.Type != ActiveUniformType.FloatVec4) { throw new ArgumentException("uniform is not floatVec4. it is " + shaderUniform.Type); }
+
+            GL.Uniform4(shaderUniform.Location, value);
+        }
         public void SetUniform(string name, ref Matrix4 value)
         {
             if (!GetShaderUniform(name, out ShaderUniform shaderUniform)) { throw new ArgumentException("uniformName not found " + name); }

@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenGLAbstraction.Core.Objects;
+using OpenTK.Mathematics;
 using StbImageSharp;
 using System;
 using System.Collections.Generic;
@@ -23,60 +24,9 @@ namespace OpenGLAbstraction.Core.Components
             public int LeftPixel { get; set; }
             public int RightPixel { get; set; }
         }
-        public class Letter
-        {
-            private readonly FontTexture FontTexture;
-            public readonly char Character;
-            
-            public readonly int UpperPixel;
-            public readonly int LowerPixel;
-            public readonly int LeftPixel;
-            public readonly int RightPixel;
-            public readonly int Height;
-            public readonly int Width;
-            public readonly Vector2 Position;
-            public readonly Vector2 Size;
+        
 
-            public readonly float RealUpperPixel;
-            public readonly float RealLowerPixel;
-            public readonly float RealLeftPixel;
-            public readonly float RealRightPixel;
-            
-            public readonly float RealHeight;
-            public readonly float RealWidth;
-            public readonly Vector2 RealPosition;
-            public readonly Vector2 RealSize;
-
-
-            public Letter(FontTexture fontTexture, char character, int upperPixel, int lowerPixel, int leftPixel, int rightPixel)
-            {
-                this.FontTexture = fontTexture;
-                Character = character;
-                UpperPixel = upperPixel;
-                LowerPixel = lowerPixel;
-                LeftPixel = leftPixel;
-                RightPixel = rightPixel;
-
-                Height = UpperPixel - LowerPixel + 1;
-                Width = RightPixel - LeftPixel + 1;
-                
-                RealUpperPixel = (float)UpperPixel / (float)FontTexture.Height;
-                RealLowerPixel = (float)LowerPixel / (float)FontTexture.Height;
-                RealLeftPixel = (float)LeftPixel / (float)FontTexture.Width;
-                RealRightPixel = (float)RightPixel / (float)FontTexture.Width;
-                
-                RealHeight = (float)Height / (float)FontTexture.Height;
-                RealWidth = (float)Width / (float)FontTexture.Width;
-
-                Position = new Vector2(LeftPixel, LowerPixel);
-                Size = new Vector2(Width, Height);
-
-                RealPosition = new Vector2(RealLeftPixel, RealLowerPixel);
-                RealSize = new Vector2(RealWidth, RealHeight);
-            }
-        }
-
-        public Dictionary<char, Letter> Letters = new Dictionary<char, Letter>();
+        public Dictionary<char, TransformUV> LettersUVs = new Dictionary<char, TransformUV>();
         public FontTexture(string path) : base(path)
         {
 
@@ -108,8 +58,8 @@ namespace OpenGLAbstraction.Core.Components
                         rightPixel = row.Columns[index + 1].RightPixel;
                         index++;
                     }
-                    Letter letter = new Letter(this, FontOrderFormat[i], row.UpperPixel, lowerPixel, column.LeftPixel, rightPixel);
-                    Letters.Add(letter.Character, letter);
+                    TransformUV letter = new TransformUV(this, row.UpperPixel, lowerPixel, column.LeftPixel, rightPixel);
+                    LettersUVs.Add(FontOrderFormat[i], letter);
                     i++;
                 }
             }

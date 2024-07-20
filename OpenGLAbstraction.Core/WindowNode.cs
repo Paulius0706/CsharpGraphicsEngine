@@ -77,7 +77,7 @@ namespace OpenGLAbstraction.Core
                 Close();
             }
         }
-        protected override void OnFramebufferResize(FramebufferResizeEventArgs args)
+        protected sealed override void OnFramebufferResize(FramebufferResizeEventArgs args)
         {
             base.OnFramebufferResize(args); 
             GL.Viewport(0, 0, args.Width, args.Height);
@@ -86,6 +86,24 @@ namespace OpenGLAbstraction.Core
             {
                 node.Value.ResizeUpdate();
             }
+            ResizeEvent();
+        }
+        public virtual void ResizeEvent(){}
+        public sealed override void Run()
+        {
+            base.Run();
+        }
+        public sealed override void SwapBuffers()
+        {
+            base.SwapBuffers();
+        }
+        protected sealed override void OnFileDrop(FileDropEventArgs e)
+        {
+            base.OnFileDrop(e);
+        }
+        protected sealed override void OnRenderThreadStarted()
+        {
+            base.OnRenderThreadStarted();
         }
         public override void Dispose()
         {

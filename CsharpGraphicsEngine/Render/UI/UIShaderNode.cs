@@ -20,20 +20,21 @@ namespace CsharpGameReforged.Render.UI
     }
     public struct UIUniforms
     {
-        //public Vector2 WindowSize;
-        //public Vector2 TextureSize;
         public Vector4 PositionSize;
         public Vector4 UVPositionSize;
+        public Vector4 Color;
+        public float Depth;
     }
     public class UIShaderNode : AbstractShaderNode<UIAtributes, UIUniforms>
     {
         public RenderNode<UIAtributes, UIUniforms> LettersRenderNode { get; private set; }
-
+        public RenderNode<UIAtributes, UIUniforms> BoxRenderNode { get; private set; }
         public UIShaderNode(WindowNode parentWindow) : base(parentWindow) 
         {
             shader = new Shader<UIAtributes, UIUniforms>("Render/UI/UI.vert", "Render/UI/UI.frag");
             var letterTexturenode = new LetterTextureNode<UIAtributes, UIUniforms>(this, "Render/UI/Textures/output-seomagnifier(2).png");
             LettersRenderNode = new LetterLayoutNode<UIAtributes, UIUniforms>(letterTexturenode, (pos, uv) => new UIAtributes(pos, uv));
+            BoxRenderNode = new BoxLayoutNode<UIAtributes, UIUniforms>(this, (pos, uv) => new UIAtributes(pos, uv));
         }
         protected override void LoadStaticUniforms()
         {

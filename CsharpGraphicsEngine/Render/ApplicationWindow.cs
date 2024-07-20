@@ -24,5 +24,16 @@ namespace CsharpGameReforged.Render
             UIRender = new UIShaderNode(this);
             //Nodes.Add(GeneratedId, UIShaderNode);
         }
+        public override void ResizeEvent()
+        {
+            foreach (var item in Program.GameLoop.lines.Values.ToList())
+            {
+                item.OnResize();
+            }
+            foreach (var item in Program.GameLoop.boxes.Values.ToList())
+            {
+                item.OnResize();
+            }
+        }
     }
 }

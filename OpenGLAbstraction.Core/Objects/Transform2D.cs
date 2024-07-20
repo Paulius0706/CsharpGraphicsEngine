@@ -23,7 +23,7 @@ namespace OpenGLAbstraction.Core.Objects
     }
     public class Transform2D
     {
-
+        //public readonly Transform2D Parent = null;
         private WindowNode _windowNode;
         public PositionRelativeType PositionRelativeType { get; set; }
 
@@ -38,10 +38,21 @@ namespace OpenGLAbstraction.Core.Objects
             set 
             {
                 _relativePixelPosition = value;
-                UpdateWindowSize();
-                UpdateRelativeWindowPosition();
-                UpdatePixelPostion();
-                UpdateWindowPosition();
+                _relativeWindowPosition = _relativePixelPosition / _windowNode.Size * 2f;
+                _pixelPositon = /*Parent == null ? */Vector2.Zero/* : Parent.PixelPostion*/;
+                switch (PositionRelativeType)
+                {
+                    case PositionRelativeType.TopLeft:   _pixelPositon += new Vector2(                     0, _windowNode.Size.Y    ) + new Vector2( RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(              0, PixelSize.Y     ); break;
+                    case PositionRelativeType.Top:       _pixelPositon += new Vector2(_windowNode.Size.X / 2, _windowNode.Size.Y    ) + new Vector2( RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(PixelSize.X / 2, PixelSize.Y     ); break;
+                    case PositionRelativeType.TopRight:  _pixelPositon += new Vector2(_windowNode.Size.X    , _windowNode.Size.Y    ) + new Vector2(-RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(PixelSize.X    , PixelSize.Y     ); break; 
+                    case PositionRelativeType.Left:      _pixelPositon += new Vector2(                     0, _windowNode.Size.Y / 2) + RelativePixelPosition                                           - new Vector2(              0, PixelSize.Y / 2f); break;
+                    case PositionRelativeType.Center:    _pixelPositon += new Vector2(_windowNode.Size.X / 2, _windowNode.Size.Y / 2) + RelativePixelPosition                                           - new Vector2(PixelSize.X / 2, PixelSize.Y / 2f); break;
+                    case PositionRelativeType.Right :    _pixelPositon += new Vector2(_windowNode.Size.X    , _windowNode.Size.Y / 2) + new Vector2(-RelativePixelPosition.X,  RelativePixelPosition.Y) - new Vector2(PixelSize.X    , PixelSize.Y / 2f); break;
+                    case PositionRelativeType.DownLeft:  _pixelPositon += new Vector2(                     0,                      0) + RelativePixelPosition                                           - new Vector2(              0,                0); break;
+                    case PositionRelativeType.Down:      _pixelPositon += new Vector2(_windowNode.Size.X / 2,                      0) + RelativePixelPosition                                           - new Vector2(PixelSize.X / 2,                0); break;
+                    case PositionRelativeType.DownRight: _pixelPositon += new Vector2(_windowNode.Size.X    ,                      0) + new Vector2(-RelativePixelPosition.X,  RelativePixelPosition.Y) - new Vector2(PixelSize.X    ,                0); break;
+                }
+                _windowPosition = (_pixelPositon / _windowNode.Size - Vector2.One * 0.5f) * 2f;
             } 
         }
         
@@ -58,49 +69,14 @@ namespace OpenGLAbstraction.Core.Objects
                 RelativePixelPosition = value * _windowNode.Size / 2f;
             }
         }
-        private void UpdateRelativeWindowPosition()
-        {
-            _relativeWindowPosition = RelativePixelPosition / _windowNode.Size * 2f;
-        }
         
         
         private Vector2 _pixelPositon;
-        public Vector2 PixelPostion
-        {
-            get
-            {
-                return _pixelPositon;
-            }
-        }
-        private void UpdatePixelPostion()
-        {
-            switch (PositionRelativeType)
-            {
-                case PositionRelativeType.TopLeft:   _pixelPositon = new Vector2(                     0, _windowNode.Size.Y    ) + new Vector2( RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(              0, PixelSize.Y     ); return;
-                case PositionRelativeType.Top:       _pixelPositon = new Vector2(_windowNode.Size.X / 2, _windowNode.Size.Y    ) + new Vector2( RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(PixelSize.X / 2, PixelSize.Y     ); return;
-                case PositionRelativeType.TopRight:  _pixelPositon = new Vector2(_windowNode.Size.X    , _windowNode.Size.Y    ) + new Vector2(-RelativePixelPosition.X, -RelativePixelPosition.Y) - new Vector2(PixelSize.X    , PixelSize.Y     ); return; 
-                case PositionRelativeType.Left:      _pixelPositon = new Vector2(                     0, _windowNode.Size.Y / 2) + RelativePixelPosition                                           - new Vector2(              0, PixelSize.Y / 2f); return;
-                case PositionRelativeType.Center:    _pixelPositon = new Vector2(_windowNode.Size.X / 2, _windowNode.Size.Y / 2) + RelativePixelPosition                                           - new Vector2(PixelSize.X / 2, PixelSize.Y / 2f); return;
-                case PositionRelativeType.Right :    _pixelPositon = new Vector2(_windowNode.Size.X    , _windowNode.Size.Y / 2) + new Vector2(-RelativePixelPosition.X,  RelativePixelPosition.Y) - new Vector2(PixelSize.X    , PixelSize.Y / 2f); return;
-                case PositionRelativeType.DownLeft:  _pixelPositon = new Vector2(                     0,                      0) + RelativePixelPosition                                           - new Vector2(              0,                0); return;
-                case PositionRelativeType.Down:      _pixelPositon = new Vector2(_windowNode.Size.X / 2,                      0) + RelativePixelPosition                                           - new Vector2(PixelSize.X / 2,                0); return;
-                case PositionRelativeType.DownRight: _pixelPositon = new Vector2(_windowNode.Size.X    ,                      0) + new Vector2(-RelativePixelPosition.X,  RelativePixelPosition.Y) - new Vector2(PixelSize.X    ,                0); return;
-            }
-        }
+        public Vector2 PixelPostion => _pixelPositon;
 
         
         private Vector2 _windowPosition;
-        public Vector2 WindowPosition
-        {
-            get
-            {
-                return _windowPosition;
-            }
-        }
-        private void UpdateWindowPosition()
-        {
-            _windowPosition = (PixelPostion / _windowNode.Size - Vector2.One * 0.5f) * 2f;
-        }
+        public Vector2 WindowPosition => _windowPosition;
 
         
         private Vector2 _pixelSize = Vector2.Zero;
@@ -113,7 +89,7 @@ namespace OpenGLAbstraction.Core.Objects
             set 
             {
                 _pixelSize = value;
-                UpdateWindowSize();
+                _windowSize = _pixelSize / _windowNode.Size * 2f;
             } 
         }
         
@@ -130,21 +106,12 @@ namespace OpenGLAbstraction.Core.Objects
                 PixelSize = value * _windowNode.Size / 2f;
             }
         }
-        private void UpdateWindowSize()
+
+        public void ResizeUpdate()
         {
-            _windowSize = PixelSize / _windowNode.Size * 2f; 
+            RelativePixelPosition = _relativePixelPosition;
+            PixelSize = _pixelSize;
         }
-        public void OnResize()
-        {
-            UpdateWindowSize();
-            
-            UpdateRelativeWindowPosition();
-
-            UpdatePixelPostion();
-            UpdateWindowPosition();
-        }
-
-
 
 
         public Transform2D(WindowNode windowNode, Vector2 pixelPosition, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft) 
