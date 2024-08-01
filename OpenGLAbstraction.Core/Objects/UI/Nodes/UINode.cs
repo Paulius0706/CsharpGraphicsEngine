@@ -47,15 +47,15 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
         }
 
         protected abstract void InternalUpdate();
-        public void OnResize()
-        {
-            InternalOnResize();
-            var nodes = this.nodes.Values.ToList();
-            foreach(var node in nodes)
-            {
-                node.OnResize();
-            }
-        }
-        protected abstract void InternalOnResize();
+        //public void OnResize()
+        //{
+        //    InternalOnResize();
+        //    var nodes = this.nodes.Values.ToList();
+        //    foreach(var node in nodes)
+        //    {
+        //        node.OnResize();
+        //    }
+        //}
+        //protected abstract void InternalOnResize();
     }
 }

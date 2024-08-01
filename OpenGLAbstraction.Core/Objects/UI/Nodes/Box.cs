@@ -24,9 +24,9 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
                 box = (BoxNode)Activator.CreateInstance(typeof(BoxNode), new object[] { BoxRenderNode, this, transform});
             });
         }
-        protected override void InternalOnResize()
+        protected override void InternalUpdate()
         {
-            Transform.ResizeUpdate();
+            Transform.Update();
         }
         public abstract void LoadUniform(BoxNode objectNode);
     }

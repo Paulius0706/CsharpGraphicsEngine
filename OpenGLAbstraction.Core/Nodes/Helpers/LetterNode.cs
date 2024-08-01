@@ -24,16 +24,23 @@ namespace OpenGLAbstraction.Core.Nodes.Helpers
         public Vector2 UvSize => _letterUV.Size;
         public Vector2 RealUvPosition => _letterUV.RealPosition;
         public Vector2 RealUvSize => _letterUV.RealSize;
-        private TextBox<LetterNode<Atributes, Uniforms>, Atributes, Uniforms> _textLine;
+        private Text<LetterNode<Atributes, Uniforms>, Atributes, Uniforms> _textLine;
 
-        public LetterNode(RenderNode<Atributes, Uniforms> parent, TextBox<LetterNode<Atributes, Uniforms>,Atributes, Uniforms> textLine, char character, Transform2D transform, int size) : base(parent)
+        public LetterNode(RenderNode<Atributes, Uniforms> parent, Text<LetterNode<Atributes, Uniforms>,Atributes, Uniforms> textLine, char character, Transform2D transform, int size) : base(parent)
         {
             Character = character;
             FontSize = size;
-            _letterUV = FontTexture.LettersUVs[Character];
             _textLine = textLine;
             Transform = transform;
-            transform.PixelSize = new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize);
+            _letterUV = FontTexture.LettersUVs[Character];
+            if(Character == ' ')
+            {
+                transform.PixelSize = new Vector2(FontSize / FontTexture.SpaceHeight * FontTexture.SpaceWidth, FontSize);
+            }
+            else
+            {
+                transform.PixelSize = new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize);
+            }
         }
         public override void LoadUniforms()
         {

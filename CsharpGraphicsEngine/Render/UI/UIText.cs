@@ -12,10 +12,10 @@ using OpenGLAbstraction.Core.Objects.UI.Nodes;
 namespace CsharpGameReforged.Render.UI
 {
 
-    public class UITextBox : TextBox<LetterNode<UIAtributes, UIUniforms>, UIAtributes, UIUniforms>
+    public class UIText : Text<LetterNode<UIAtributes, UIUniforms>, UIAtributes, UIUniforms>
     {
         protected override RenderNode<UIAtributes, UIUniforms> LettersRenderNode => Program.Window.UIRender.LettersRenderNode;
-        public UITextBox(UINode parent, string text, Transform2D transform, int size) : base(parent, text, transform, size)
+        public UIText(UINode parent, TextBoxOptions textBoxOptions) : base(parent, textBoxOptions)
         {
         }
 
@@ -28,9 +28,5 @@ namespace CsharpGameReforged.Render.UI
             LettersRenderNode.Shader.SetUniform("Color", new Vector4(0, 0, 0, 0));
         }
 
-        protected override void InternalUpdate()
-        {
-
-        }
     }
 }

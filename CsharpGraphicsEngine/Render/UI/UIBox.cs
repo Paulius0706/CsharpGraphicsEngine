@@ -29,10 +29,5 @@ namespace CsharpGameReforged.Render.UI
             BoxRenderNode.Shader.SetUniform("Depth", WindowdDepth);
 
         }
-
-        protected override void InternalUpdate()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -28,11 +28,11 @@ namespace CsharpGameReforged.Render
         {
             foreach (var item in Program.GameLoop.lines.Values.ToList())
             {
-                item.OnResize();
+                item.Update();
             }
             foreach (var item in Program.GameLoop.boxes.Values.ToList())
             {
-                item.OnResize();
+                item.Update();
             }
         }
     }

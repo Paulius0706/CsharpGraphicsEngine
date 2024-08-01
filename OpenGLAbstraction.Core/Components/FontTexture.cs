@@ -12,6 +12,7 @@ namespace OpenGLAbstraction.Core.Components
     public class FontTexture : Texture
     {
         public const string FontOrderFormat = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+        
         private class FontRow
         {
             public int UpperPixel { get; set; }
@@ -26,11 +27,15 @@ namespace OpenGLAbstraction.Core.Components
         }
         
 
+
         public Dictionary<char, TransformUV> LettersUVs = new Dictionary<char, TransformUV>();
+        public int SpaceWidth { get; private set; }
+        public int SpaceHeight { get; private set; }
         public FontTexture(string path) : base(path)
         {
 
         }
+
         protected override void ImageWarping(ImageResult image)
         {
             Color4[] colors = GetRGBAColorsArray(image);
@@ -62,6 +67,12 @@ namespace OpenGLAbstraction.Core.Components
                     LettersUVs.Add(FontOrderFormat[i], letter);
                     i++;
                 }
+            }
+            if(!LettersUVs.ContainsKey(' '))
+            {
+                SpaceWidth = (int)LettersUVs.Values.Select(o => o.Width).Average();
+                SpaceHeight = (int)LettersUVs.Values.Select(o => o.Height).Average();
+                LettersUVs.Add(' ', new TransformUV(this, 0, 0, 0, 0));
             }
             
 
