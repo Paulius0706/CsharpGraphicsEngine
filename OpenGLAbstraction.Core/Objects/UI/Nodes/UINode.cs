@@ -18,6 +18,7 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
         protected Dictionary<string,UINode> nodes = new Dictionary<string, UINode>();
         protected readonly UINode Parent = null;
         private float _depth { get; set; }
+
         public float Depth 
         {
             get 
@@ -33,6 +34,7 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
         public readonly Transform2D Transform;
         public UINode(UINode parent, Transform2D transform) 
         {
+            if (parent != null) transform.Parent = parent.Transform;
             this.Transform = transform;
             this.Parent = parent;
         }

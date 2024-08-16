@@ -53,11 +53,11 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
             {
                 LettersRenderNode.NodeThreadAction(() =>
                 {
-                    Vector2 pixelPosition = Transform.PixelPostion + Vector2.UnitX * offset;
-                    Transform2D transform = new Transform2D(LettersRenderNode.Window, pixelPosition);
-
+                    Vector2 pixelPosition = /*Transform.PixelPostion +*/ Vector2.UnitX * offset;
+                    Transform2D transform = new Transform2D(LettersRenderNode.Window, pixelPosition, PositionRelativeType.TopLeft);
+                    transform.Parent = this.Transform;
                     Letter letterNode = (Letter)Activator.CreateInstance(typeof(Letter), new object[] { LettersRenderNode, this, character, transform, Size });  //this.ConstructLetter(character, lowerleftPosition + Vector2.UnitX * offset, size);
-                    offset += letterNode.Transform.PixelSize.X;
+                    offset += letterNode.Transform.SizeInPixels.X;
                     letterNodes.Add(letterNode);
                 });
             }
@@ -71,19 +71,20 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
         private void RedistributeLetters()
         {
             float Xoffset = 0;
-            float Yoffset = Transform.PixelSize.Y - Size;
+            float Yoffset = 0;
+            //float Yoffset = Transform.PixelSize.Y - Size;
             foreach (var node in letterNodes)
             {
-                var Xoffset1 = Xoffset + node.Transform.PixelSize.X;
-                if (Transform.PixelPostion.X + Transform.PixelSize.X < Transform.PixelPostion.X + Xoffset1 + node.Transform.PixelSize.X && !InLine)
+                var Xoffset1 = Xoffset + node.Transform.SizeInPixels.X;
+                if (Transform.PostionInPixels.X + Transform.SizeInPixels.X < Transform.PostionInPixels.X + Xoffset + node.Transform.SizeInPixels.X + node.Transform.SizeInPixels.X && !InLine)
                 {
                     Xoffset = 0;
-                    Yoffset -= (float)Size * LineHeight;
+                    Yoffset += (float)Size * LineHeight;
                 }
-                Vector2 pixelPosition = Transform.PixelPostion + Vector2.UnitX * Xoffset + Vector2.UnitY * Yoffset;
-                node.Transform.RelativePixelPosition = pixelPosition;
-                node.Transform.Update();
-                Xoffset += node.Transform.PixelSize.X;
+                Vector2 pixelPosition = Vector2.UnitX * Xoffset + Vector2.UnitY * Yoffset;
+                node.Transform.RelativePositionInPixels = pixelPosition;
+                //node.Transform.Update();
+                Xoffset += node.Transform.SizeInPixels.X;
             }
         }
         public abstract void LoadUniforms(Letter letter);

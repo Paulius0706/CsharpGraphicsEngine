@@ -53,7 +53,7 @@ namespace CsharpGameReforged.Logic
             //lines["2"] = new UITextBox(null,"abcdefghijklmnopqrstuvw", new Transform2D(Program.Window, new Vector2(50, 100)), 50);
             lines["1"] = new UIText(null, new TextBoxOptions("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ", new Transform2D(Program.Window, new Vector2(50, 50), new Vector2(600, 200), PositionRelativeType.TopLeft), 50));
 
-            boxes["1"] = new UIBox(null, new Transform2D(Program.Window, new Vector2(50, 200), new Vector2(100, 100), PositionRelativeType.TopRight), Color4.Aqua);
+            boxes["1"] = new UIBox(null, new Transform2D(Program.Window, new Vector2(50, 50), new Vector2(100, 100), PositionRelativeType.TopRight), Color4.Aqua);
 
         }
         public virtual void Update()

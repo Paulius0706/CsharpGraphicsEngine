@@ -23,7 +23,7 @@ namespace CsharpGameReforged.Render.UI
 
         public override void LoadUniform(BoxNode<UIAtributes, UIUniforms> objectNode)
         {
-            BoxRenderNode.Shader.SetUniform("PositionSize", new Vector4(Transform.WindowPosition.X, Transform.WindowPosition.Y, Transform.WindowSize.X, Transform.WindowSize.Y));
+            BoxRenderNode.Shader.SetUniform("PositionSize", new Vector4(Transform.PositionInWindows.X, Transform.PositionInWindows.Y, Transform.SizeInWindows.X, Transform.SizeInWindows.Y));
             BoxRenderNode.Shader.SetUniform("UVPositionSize", new Vector4(0, 0, 1, 1));
             BoxRenderNode.Shader.SetUniform("Color", Color);
             BoxRenderNode.Shader.SetUniform("Depth", WindowdDepth);

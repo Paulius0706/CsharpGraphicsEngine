@@ -35,11 +35,11 @@ namespace OpenGLAbstraction.Core.Nodes.Helpers
             _letterUV = FontTexture.LettersUVs[Character];
             if(Character == ' ')
             {
-                transform.PixelSize = new Vector2(FontSize / FontTexture.SpaceHeight * FontTexture.SpaceWidth, FontSize);
+                transform.SizeInPixels = new Vector2(FontSize / FontTexture.SpaceHeight * FontTexture.SpaceWidth, FontSize);
             }
             else
             {
-                transform.PixelSize = new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize);
+                transform.SizeInPixels = new Vector2(FontSize / UvSize.Y * UvSize.X, FontSize);
             }
         }
         public override void LoadUniforms()

@@ -22,7 +22,7 @@ namespace CsharpGameReforged.Render.UI
         public override void LoadUniforms(LetterNode<UIAtributes, UIUniforms> letter)
         {
             //LettersRenderNode.Shader.SetUniform("TextureSize", new Vector2(LettersRenderNode.Texture.Width, LettersRenderNode.Texture.Height));
-            LettersRenderNode.Shader.SetUniform("PositionSize", new Vector4(letter.Transform.WindowPosition.X, letter.Transform.WindowPosition.Y, letter.Transform.WindowSize.X, letter.Transform.WindowSize.Y));
+            LettersRenderNode.Shader.SetUniform("PositionSize", new Vector4(letter.Transform.PositionInWindows.X, letter.Transform.PositionInWindows.Y, letter.Transform.SizeInWindows.X, letter.Transform.SizeInWindows.Y));
             LettersRenderNode.Shader.SetUniform("UVPositionSize", new Vector4(letter.RealUvPosition.X, letter.RealUvPosition.Y, letter.RealUvSize.X, letter.RealUvSize.Y));
             LettersRenderNode.Shader.SetUniform("Depth", WindowdDepth);
             LettersRenderNode.Shader.SetUniform("Color", new Vector4(0, 0, 0, 0));
