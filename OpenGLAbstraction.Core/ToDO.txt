@@ -1,0 +1,4 @@
+﻿Make tree structure based on interfaces only no inheritences
+
+Make Generics disapear
+Starting with shader and other GS objects directly asociated with node

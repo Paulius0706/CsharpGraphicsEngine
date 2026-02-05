@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenGLAbstraction.Core.Definitions.Components;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Components
 {
-    public class Layout<Atributes, Uniforms> where Atributes : struct where  Uniforms : struct
+    public class Layout<T> : ILayout where T : struct
     {
         public const int MinVertexCount = 1;
         public const int MaxVertexCount = 100_000;
@@ -19,11 +20,11 @@ namespace OpenGLAbstraction.Core.Components
         private readonly int VertexArrayHandle;
         private readonly int VertexBufferHandle;
         private readonly int IndexBufferHandle;
-        private readonly Shader<Atributes, Uniforms> shader;
+        private readonly IShader shader;
         public int VertexBufferCount { get; private set; }
         public int IndexBufferCount { get; private set; }
 
-        public Layout(Shader<Atributes, Uniforms> shader, IEnumerable<Atributes> vertices, IEnumerable<int> indices = null)
+        public Layout(IShader shader, IEnumerable<T> vertices, IEnumerable<int> indices = null)
         {
             this.shader = shader;
             VertexBufferCount = vertices == null ? 0 : vertices.Count();
@@ -39,12 +40,12 @@ namespace OpenGLAbstraction.Core.Components
             GL.BindVertexArray(VertexArrayHandle);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferHandle);
-            GL.BufferData(BufferTarget.ArrayBuffer, VertexBufferCount * Marshal.SizeOf<Atributes>(), vertices.ToArray(), BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, VertexBufferCount * Marshal.SizeOf<T>(), vertices.ToArray(), BufferUsageHint.StaticDraw);
 
             if (IndexBufferCount != 0)
             {
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBufferHandle);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, IndexBufferCount * sizeof(int), indices.ToArray(), BufferUsageHint.StaticDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, IndexBufferCount * Marshal.SizeOf<T>(), indices.ToArray(), BufferUsageHint.StaticDraw);
             }
 
             AssignAtributes();
@@ -79,7 +80,7 @@ namespace OpenGLAbstraction.Core.Components
 
         private void AssignAtributes()
         {
-            Type vertexStructType = typeof(Atributes);
+            Type vertexStructType = typeof(T);
             FieldInfo[] vertexStructFields = vertexStructType.GetFields();
 
             var shaderAtributes = shader.ShaderAttributes;
@@ -99,7 +100,7 @@ namespace OpenGLAbstraction.Core.Components
 
                 GL.EnableVertexAttribArray(shaderAttribute.Location);
                 // if offset dont work use Marshal.OffsetOf(typeof(IMAGE_DOS_HEADER), "e_lfanew")
-                GL.VertexAttribPointer(shaderAttribute.Location, atribSize, VertexAttribPointerType.Float, false, Marshal.SizeOf<Atributes>(), Marshal.OffsetOf(typeof(Atributes), shaderAttribute.Name));
+                GL.VertexAttribPointer(shaderAttribute.Location, atribSize, VertexAttribPointerType.Float, false, Marshal.SizeOf<T>(), Marshal.OffsetOf(typeof(T), shaderAttribute.Name));
             }
         }
 

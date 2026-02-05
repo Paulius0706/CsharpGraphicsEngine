@@ -1,18 +1,24 @@
 ﻿using OpenGLAbstraction.Core.Components;
+using OpenGLAbstraction.Core.Definitions.Nodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OpenGLAbstraction.Core.Nodes
 {
-    public class AbstractLayoutNode<Attributes, Uniforms> : RenderNode<Attributes, Uniforms> where Attributes : struct where Uniforms : struct
+
+    public abstract class AbstractObjectInstanceRenderNode : RenderNode, IObjectInstanceRenderNode
     {
-        protected Layout<Attributes, Uniforms> layout;
-        public override Layout<Attributes, Uniforms> Layout => layout;
-        public AbstractLayoutNode(RenderNode<Attributes, Uniforms> parent) : base(parent) {}
+        public AbstractObjectInstanceRenderNode(IRenderNode parent) : base(parent, false, false)
+        {
+
+        }
         protected sealed override void NodeLoadCheck()
         {
             base.NodeLoadCheck();
@@ -21,13 +27,16 @@ namespace OpenGLAbstraction.Core.Nodes
         }
         public sealed override void Render(FrameEventArgs args)
         {
-            layout.Use();
-            base.Render(args);
-            layout.UnUse();
+            LoadUniforms();
+            Layout.Render();
+        }
+        public virtual void LoadUniforms()
+        {
+
         }
         protected override void InternalDispose()
         {
-            layout.Dispose();
+
         }
     }
 }

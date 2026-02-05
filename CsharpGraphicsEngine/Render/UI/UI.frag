@@ -12,9 +12,10 @@ void main()
 {
     if(Color.w > 0){
         FragColor = Color;
-        //FragColor = texture(Texture, vUV);
     }
     else{
-        FragColor = texture(Texture, vUV);
+        vec4 color = texture(Texture, vUV);
+        if(color.w == 0) discard;
+        FragColor = color;
     }
 }

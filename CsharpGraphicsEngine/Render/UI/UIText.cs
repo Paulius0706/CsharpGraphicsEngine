@@ -8,25 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenGLAbstraction.Core.Objects;
 using OpenGLAbstraction.Core.Objects.UI.Nodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes;
+using OpenGLAbstraction.Core.Definitions.Nodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes.Helpers;
 
 namespace CsharpGameReforged.Render.UI
 {
 
-    public class UIText : Text<LetterNode<UIAtributes, UIUniforms>, UIAtributes, UIUniforms>
+    public class UIText : TextUINode ,ITextUINode, IUINode
     {
-        protected override RenderNode<UIAtributes, UIUniforms> LettersRenderNode => Program.Window.UIRender.LettersRenderNode;
-        public UIText(UINode parent, TextBoxOptions textBoxOptions) : base(parent, textBoxOptions)
+        protected override IRenderNode LettersRenderNode => Program.Window.LetterLayoutRenderNode;
+        public UIText(UINode parent, TextOptions textBoxOptions) : base(parent, textBoxOptions) { }
+        public override ILetterObjectInstanceRenderNode CreateLetter(IRenderNode renderNode, ITextUINode text, char character, Transform2D transform, int size) => new LetterObjectInstanceRenderNode(renderNode, text, character, transform, size);
+        public override void LoadUniforms(ILetterObjectInstanceRenderNode letter)
         {
-        }
-
-        public override void LoadUniforms(LetterNode<UIAtributes, UIUniforms> letter)
-        {
-            //LettersRenderNode.Shader.SetUniform("TextureSize", new Vector2(LettersRenderNode.Texture.Width, LettersRenderNode.Texture.Height));
-            LettersRenderNode.Shader.SetUniform("PositionSize", new Vector4(letter.Transform.PositionInWindows.X, letter.Transform.PositionInWindows.Y, letter.Transform.SizeInWindows.X, letter.Transform.SizeInWindows.Y));
+            var mat = letter.Transform.MatrixInWindows;
             LettersRenderNode.Shader.SetUniform("UVPositionSize", new Vector4(letter.RealUvPosition.X, letter.RealUvPosition.Y, letter.RealUvSize.X, letter.RealUvSize.Y));
+            LettersRenderNode.Shader.SetUniform("Matrix", ref mat);
             LettersRenderNode.Shader.SetUniform("Depth", WindowdDepth);
             LettersRenderNode.Shader.SetUniform("Color", new Vector4(0, 0, 0, 0));
         }
 
+        
     }
 }

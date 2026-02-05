@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core
 {
-    public class WindowNode : GameWindow
+    public abstract class WindowNode : GameWindow
     {
         private int counter = 0;
         public string GeneratedId => "GEN-" + counter++;
@@ -33,8 +33,15 @@ namespace OpenGLAbstraction.Core
         {
             base.OnLoad();
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.Blend);
+
+            //GL.BlendFunc(BlendingFactor.SrcColor, BlendingFactor.OneMinusSrcAlpha);
+            //GL.AlphaFunc(AlphaFunction.Less);
+            //GL.Enable(EnableCap.Blend);
+            
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Less);
+
             Load();
             foreach (var node in Nodes.Values)
             {
@@ -42,14 +49,17 @@ namespace OpenGLAbstraction.Core
             }
             Loaded = true;
         }
-        protected virtual void Load()
-        {
-        }
+        protected abstract void Load();
         protected sealed override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            //GL.Enable(EnableCap.DepthTest);
+            //GL.DepthMask(true);
+            //GL.DepthFunc(DepthFunction.Less);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             List<string> nodeKeys = Nodes.Keys.Select(o => o).ToList();
             foreach(var node in nodeKeys)
@@ -84,7 +94,7 @@ namespace OpenGLAbstraction.Core
             var nodes = this.Nodes.ToArray();
             foreach (var node in nodes)
             {
-                node.Value.ResizeUpdate();
+                node.Value.Resize();
             }
             ResizeEvent();
         }

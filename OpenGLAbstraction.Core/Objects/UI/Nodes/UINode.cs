@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenGLAbstraction.Core.Definitions.Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -7,21 +8,24 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Objects.UI.Nodes
 {
-    public abstract class UINode
+
+    public abstract class UINode : IUINode
     {
-        public static float MinDepth {  get; set; } = -100f;
+        private int counter = 0;
+        public string GeneratedId => "UIGEN-" + counter++;
+        public static float MinDepth { get; set; } = -100f;
         public static float MaxDepth { get; set; } = 100f;
-        public static float MinDepthLayer { get; set; } = 0.9f;
+        public static float MinDepthLayer { get; set; } = 0.0f;
         public static float MaxDepthLayer { get; set; } = 1f;
 
+        public IUINode Parent { get; private set; } = null;
 
-        protected Dictionary<string,UINode> nodes = new Dictionary<string, UINode>();
-        protected readonly UINode Parent = null;
-        private float _depth { get; set; }
+        public Dictionary<string, IUINode> _nodes { get; private set; } = new Dictionary<string, IUINode>();
+        private float _depth { get; set; } = 0.5f;
 
-        public float Depth 
+        public float Depth
         {
-            get 
+            get
             {
                 return (_depth - MinDepthLayer) / (MaxDepthLayer - MinDepthLayer) * (MaxDepth - MinDepth) - MinDepth;
             }
@@ -31,17 +35,23 @@ namespace OpenGLAbstraction.Core.Objects.UI.Nodes
             }
         }
         public float WindowdDepth => _depth;
-        public readonly Transform2D Transform;
-        public UINode(UINode parent, Transform2D transform) 
+        private Transform2D _transform;
+        public Transform2D Transform => _transform;
+        public UINode(IUINode parent, Transform2D transform)
         {
             if (parent != null) transform.Parent = parent.Transform;
-            this.Transform = transform;
+            this._transform = transform;
             this.Parent = parent;
+            if (Parent != null)
+            {
+                Parent._nodes.Add(Parent.GeneratedId, this);
+                this.Depth = Parent.Depth - 1;
+            }
         }
         public void Update()
         {
             InternalUpdate();
-            var nodes = this.nodes.Values;
+            var nodes = this._nodes.Values;
             foreach (var node in nodes)
             {
                 node.Update();

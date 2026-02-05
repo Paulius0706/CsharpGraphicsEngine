@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using OpenGLAbstraction.Core.Definitions.Components;
+using OpenTK.Graphics.OpenGL;
 using StbImageSharp;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Components
 {
-    public class Texture : IDisposable
+    public class Texture : ITexture
     {
         private readonly int textureHandle;
-        public readonly int Width;
-        public readonly int Height;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         private bool disposed;
 
@@ -28,7 +29,6 @@ namespace OpenGLAbstraction.Core.Components
             ImageResult image = ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha);
             Width = image.Width;
             Height = image.Height;
-            ImageWarping(image);
             Width = image.Width;
             Height = image.Height;
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
@@ -42,16 +42,12 @@ namespace OpenGLAbstraction.Core.Components
         {
             Dispose();
         }
-        protected virtual void ImageWarping(ImageResult image)
-        {
-
-        }
         public void Use()
         {
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, textureHandle);
         }
-        public void Unuse()
+        public void UnUse()
         {
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
@@ -64,6 +60,5 @@ namespace OpenGLAbstraction.Core.Components
             GL.DeleteTexture(textureHandle);
             GC.SuppressFinalize(this);
         }
-
     }
 }

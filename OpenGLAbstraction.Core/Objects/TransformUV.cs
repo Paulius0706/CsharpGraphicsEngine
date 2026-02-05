@@ -1,4 +1,5 @@
 ﻿using OpenGLAbstraction.Core.Components;
+using OpenGLAbstraction.Core.Definitions.Components;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Objects
 {
-    public class TransformUV
+    public struct TransformUV
     {
-        private readonly Texture Texture;
+        private readonly ITexture Texture;
 
         public readonly int UpperPixel;
         public readonly int LowerPixel;
@@ -32,7 +33,7 @@ namespace OpenGLAbstraction.Core.Objects
         public readonly Vector2 RealSize;
 
 
-        public TransformUV(Texture texture, int upperPixel, int lowerPixel, int leftPixel, int rightPixel)
+        public TransformUV(ITexture texture, int upperPixel, int lowerPixel, int leftPixel, int rightPixel)
         {
             this.Texture = texture;
             UpperPixel = upperPixel;

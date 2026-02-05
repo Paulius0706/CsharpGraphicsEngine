@@ -1,4 +1,7 @@
 ﻿using OpenGLAbstraction.Core.Components;
+using OpenGLAbstraction.Core.Definitions.Components;
+using OpenGLAbstraction.Core.Definitions.Nodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes;
 using OpenTK.Windowing.Common;
 using System;
 using System.Collections.Generic;
@@ -8,11 +11,9 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Nodes
 {
-    public class AbstractTextureNode<Atributes, Uniforms> : RenderNode<Atributes, Uniforms> where Atributes : struct where Uniforms : struct
+    public abstract class AbstractTextureRenderNode : RenderNode, ITextureRenderNode
     {
-        protected Texture texture;
-        public override Texture Texture => texture;
-        public AbstractTextureNode(RenderNode<Atributes, Uniforms> parent) : base(parent)
+        public AbstractTextureRenderNode(IRenderNode parent) : base(parent)
         {                  
         }
         protected sealed override void NodeLoadCheck()
@@ -23,14 +24,15 @@ namespace OpenGLAbstraction.Core.Nodes
         }
         public sealed override void Render(FrameEventArgs args)
         {
-            if (texture == null) { throw new Exception("Texture is not loaded"); }
-            texture.Use();
+            if (_texture == null) { throw new Exception("Texture is not loaded"); }
+            if (!_nodes.Any() && (_nodeActionsQueue == null || !_nodeActionsQueue.Any())) return;
+            _texture.Use();
             base.Render(args);
-            texture.Unuse();
+            _texture.UnUse();
         }
         protected override void InternalDispose()
         {
-            texture.Dispose();
+            _texture.Dispose();
         }
     }
 }

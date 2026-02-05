@@ -1,4 +1,6 @@
-﻿using OpenGLAbstraction.Core.Objects;
+﻿using OpenGLAbstraction.Core.Definitions.Components;
+using OpenGLAbstraction.Core.Objects;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using StbImageSharp;
 using System;
@@ -9,40 +11,91 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Components
 {
-    public class FontTexture : Texture
+    public class FontTexture : IFontTexture
     {
         public const string FontOrderFormat = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-        
-        private class FontRow
+        private readonly int textureHandle;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        private bool disposed;
+        private struct FontRow
         {
-            public int UpperPixel { get; set; }
-            public int LowerPixel { get; set; }
+            public int UpperPixel;
+            public int LowerPixel;
             public int Height => UpperPixel - LowerPixel;
-            public List<FontColumn> Columns { get; set; } = new List<FontColumn>();
+            public List<FontColumn> Columns;
         }
-        private class FontColumn
+        private struct FontColumn
         {
-            public int LeftPixel { get; set; }
-            public int RightPixel { get; set; }
+            public int LeftPixel;
+            public int RightPixel;
         }
-        
 
 
-        public Dictionary<char, TransformUV> LettersUVs = new Dictionary<char, TransformUV>();
+        private Dictionary<char, TransformUV> _lettersUVs = new Dictionary<char, TransformUV>();
+        public IReadOnlyDictionary<char, TransformUV> LettersUVs => _lettersUVs;
         public int SpaceWidth { get; private set; }
         public int SpaceHeight { get; private set; }
-        public FontTexture(string path) : base(path)
+        public FontTexture(string path)
         {
+            textureHandle = GL.GenTexture();
+            GL.BindTexture(TextureTarget.Texture2D, textureHandle);
+            // stb_image loads from the top-left pixel, whereas OpenGL loads from the bottom-left, causing the texture to be flipped vertically.
+            // This will correct that, making the texture display properly.
+            //StbImage.stbi_set_flip_vertically_on_load(1);
 
+            // Load the image.
+            ImageResult image = ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha);
+            Width = image.Width;
+            Height = image.Height;
+            ImageWarping(image);
+            Width = image.Width;
+            Height = image.Height;
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+        ~FontTexture()
+        {
+            Dispose();
+        }
+        public void Use()
+        {
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, textureHandle);
+        }
+        public void UnUse()
+        {
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
-        protected override void ImageWarping(ImageResult image)
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+
+            GL.DeleteTexture(textureHandle);
+            GC.SuppressFinalize(this);
+        }
+
+        protected void ImageWarping(ImageResult image)
         {
             Color4[] colors = GetRGBAColorsArray(image);
             List<FontRow> fontRows = GetFontRows(colors, image.Width, image.Height);
-            foreach (FontRow row in fontRows) 
+            for(int index = 0; index < fontRows.Count; index++)
             {
-                row.Columns = GetFontColumns(colors, image.Width, image.Height, row);
+
+                fontRows[index] = new FontRow()
+                {
+                    LowerPixel = fontRows[index].LowerPixel,
+                    UpperPixel = fontRows[index].UpperPixel,
+                    Columns = GetFontColumns(colors, image.Width, image.Height, fontRows[index])
+                };
+
             }
             int i = 0;
             var maxHeight = fontRows.Max(o => o.Height);
@@ -64,7 +117,7 @@ namespace OpenGLAbstraction.Core.Components
                         index++;
                     }
                     TransformUV letter = new TransformUV(this, row.UpperPixel, lowerPixel, column.LeftPixel, rightPixel);
-                    LettersUVs.Add(FontOrderFormat[i], letter);
+                    _lettersUVs.Add(FontOrderFormat[i], letter);
                     i++;
                 }
             }
@@ -72,7 +125,7 @@ namespace OpenGLAbstraction.Core.Components
             {
                 SpaceWidth = (int)LettersUVs.Values.Select(o => o.Width).Average();
                 SpaceHeight = (int)LettersUVs.Values.Select(o => o.Height).Average();
-                LettersUVs.Add(' ', new TransformUV(this, 0, 0, 0, 0));
+                _lettersUVs.Add(' ', new TransformUV(this, 0, 0, 0, 0));
             }
             
 
@@ -85,6 +138,7 @@ namespace OpenGLAbstraction.Core.Components
             {
                 if(GetRow(colors, width, height, rowIndex).All(o => o.A == 0)) { continue; }
                 FontRow fontRow = new FontRow();
+                fontRow.Columns = new List<FontColumn>();
                 fontRow.LowerPixel = rowIndex;
                 for(int rowIndex1 = rowIndex + 1; rowIndex1 < height; rowIndex1++)
                 {

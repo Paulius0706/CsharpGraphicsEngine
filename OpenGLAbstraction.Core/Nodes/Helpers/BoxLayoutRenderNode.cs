@@ -1,6 +1,11 @@
 ﻿
 using OpenGLAbstraction.Core.Components;
+using OpenGLAbstraction.Core.Definitions.Components;
+using OpenGLAbstraction.Core.Definitions.Nodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes;
+using OpenGLAbstraction.Core.Definitions.RenderNodes.Helpers;
 using OpenGLAbstraction.Core.Nodes;
+using OpenGLAbstraction.Core.Objects;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
@@ -11,16 +16,16 @@ using System.Threading.Tasks;
 
 namespace OpenGLAbstraction.Core.Nodes.Helpers
 {
-    public class LetterLayoutNode<Atributes, Uniforms> : AbstractLayoutNode<Atributes, Uniforms> where Atributes : struct where Uniforms : struct
+    public class BoxLayoutRenderNode<T> : AbstractLayoutRenderNode, IBoxLayoutRenderNode where T : struct
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="constructor">method to construct atribute with position and uv</param>
-        public LetterLayoutNode(RenderNode<Atributes, Uniforms> parent, Func<Vector3,Vector2,Atributes> constructor) : base(parent)
+        public BoxLayoutRenderNode(IRenderNode parent, Func<Vector3,Vector2,T> constructor) : base(parent)
         {
-            layout = new Layout<Atributes, Uniforms>(Shader, new List<Atributes>()
+            _layout = new Layout<T>(Shader, new List<T>()
             {
                 constructor(new Vector3(1.0f,  1.0f, 0.0f), new Vector2(1.0f, 0.0f)),
                 constructor(new Vector3(1.0f,  0.0f, 0.0f), new Vector2(1.0f, 1.0f)),
@@ -33,5 +38,9 @@ namespace OpenGLAbstraction.Core.Nodes.Helpers
             });
         }
 
+        protected override void InternalResize()
+        {
+        
+        }
     }
 }

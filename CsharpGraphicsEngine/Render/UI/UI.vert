@@ -1,10 +1,8 @@
 #version 330 core
 
-uniform vec2 WindowSize;
-uniform vec2 TextureSize;
+uniform mat4 Matrix;
 uniform float Depth;
 
-uniform vec4 PositionSize;
 uniform vec4 UVPositionSize;
 
 layout (location = 0) in vec3 aPosition;
@@ -17,8 +15,5 @@ void main()
     vUV = vec2(
         UVPositionSize.x + aUV.x*UVPositionSize.z, 
         UVPositionSize.y + aUV.y*UVPositionSize.w);
-    gl_Position = vec4(
-        PositionSize.x + aPosition.x*PositionSize.z, 
-        PositionSize.y + aPosition.y*PositionSize.w,
-        Depth,1);
+    gl_Position = vec4(aPosition, 1) * Matrix + vec4(0,0,Depth,0);
 }  

@@ -59,8 +59,12 @@ namespace OpenGLAbstraction.Core.Objects
         public PositionRelativeType _positionRelativeType;
         public PositionRelativeType PositionRelativeType { get { return _positionRelativeType; } set { _positionRelativeType = value; Update(); } }
 
-        private Matrix4 _matrix;
-        public Matrix4 Matrix => _matrix;
+        private Matrix4 _matrixInWindows;
+        public Matrix4 MatrixInWindows => _matrixInWindows;
+
+        private Matrix4 _matrixInPixels;
+        public Matrix4 MatrixInPixels => _matrixInPixels;
+
 
         private float _rotation;
         public float RotationInRadians{ get { return _rotation; } set { _rotation = value; Update(); } }
@@ -85,32 +89,38 @@ namespace OpenGLAbstraction.Core.Objects
         {
             _relativePositionInWindows = _relativePositionInPixels / _windowNode.Size * 2f;
             var parentPixelPosition = _parent == null ? Vector2.Zero : _parent.PostionInPixels;
-            var parentPixelSize = _parent == null ? _windowNode.Size : _parent.SizeInPixels;
+            var parentSizeinPixels = _parent == null ? _windowNode.Size : _parent.SizeInPixels;
             var parentWindowPosition = _parent == null ? -Vector2.One : _parent.PositionInWindows;
             var parentSizeinWindow = _parent == null ? Vector2.One * 2f : _parent.SizeInWindows;
             var parentRotation = _parent == null ? 0 : _parent.RotationInRadians;
-            Vector2 relativePosition = Vector2.Zero;
+            Vector2 relativePositioninPixels = Vector2.Zero;
             switch (_positionRelativeType)
             {
-                case PositionRelativeType.TopLeft:   relativePosition = new Vector2( _relativePositionInWindows.X, -_relativePositionInWindows.Y) - new Vector2(                   0, _sizeInWindows.Y     ) + new Vector2(                       0, parentSizeinWindow.Y     ); break;
-                case PositionRelativeType.Top:       relativePosition = new Vector2( _relativePositionInWindows.X, -_relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X / 2, _sizeInWindows.Y     ) + new Vector2(parentSizeinWindow.X / 2, parentSizeinWindow.Y     ); break;
-                case PositionRelativeType.TopRight:  relativePosition = new Vector2(-_relativePositionInWindows.X, -_relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X    , _sizeInWindows.Y     ) + new Vector2(parentSizeinWindow.X    , parentSizeinWindow.Y     ); break;
-                case PositionRelativeType.Left:      relativePosition = new Vector2( _relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(                   0, _sizeInWindows.Y / 2f) + new Vector2(                       0, parentSizeinWindow.Y / 2f); break;
-                case PositionRelativeType.Center:    relativePosition = new Vector2( _relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X / 2, _sizeInWindows.Y / 2f) + new Vector2(parentSizeinWindow.X / 2, parentSizeinWindow.Y / 2f); break;
-                case PositionRelativeType.Right:     relativePosition = new Vector2(-_relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X    , _sizeInWindows.Y / 2f) + new Vector2(parentSizeinWindow.X    , parentSizeinWindow.Y / 2f); break;
-                case PositionRelativeType.DownLeft:  relativePosition = new Vector2( _relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(                   0,                     0) + new Vector2(                       0,                         0); break;
-                case PositionRelativeType.Down:      relativePosition = new Vector2( _relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X / 2,                     0) + new Vector2(parentSizeinWindow.X / 2,                         0); break;
-                case PositionRelativeType.DownRight: relativePosition = new Vector2(-_relativePositionInWindows.X,  _relativePositionInWindows.Y) - new Vector2(_sizeInWindows.X    ,                     0) + new Vector2(parentSizeinWindow.X    ,                         0); break;
+                case PositionRelativeType.TopLeft:   relativePositioninPixels = new Vector2( _relativePositionInPixels.X, -_relativePositionInPixels.Y) - new Vector2(                  0, _sizeInPixels.Y     ) + new Vector2(                       0, parentSizeinPixels.Y     ); break;
+                case PositionRelativeType.Top:       relativePositioninPixels = new Vector2( _relativePositionInPixels.X, -_relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X / 2, _sizeInPixels.Y     ) + new Vector2(parentSizeinPixels.X / 2, parentSizeinPixels.Y     ); break;
+                case PositionRelativeType.TopRight:  relativePositioninPixels = new Vector2(-_relativePositionInPixels.X, -_relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X    , _sizeInPixels.Y     ) + new Vector2(parentSizeinPixels.X    , parentSizeinPixels.Y     ); break;
+                case PositionRelativeType.Left:      relativePositioninPixels = new Vector2( _relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(                  0, _sizeInPixels.Y / 2f) + new Vector2(                       0, parentSizeinPixels.Y / 2f); break;
+                case PositionRelativeType.Center:    relativePositioninPixels = new Vector2( _relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X / 2, _sizeInPixels.Y / 2f) + new Vector2(parentSizeinPixels.X / 2, parentSizeinPixels.Y / 2f); break;
+                case PositionRelativeType.Right:     relativePositioninPixels = new Vector2(-_relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X    , _sizeInPixels.Y / 2f) + new Vector2(parentSizeinPixels.X    , parentSizeinPixels.Y / 2f); break;
+                case PositionRelativeType.DownLeft:  relativePositioninPixels = new Vector2( _relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(                  0,                    0) + new Vector2(                       0,                         0); break;
+                case PositionRelativeType.Down:      relativePositioninPixels = new Vector2( _relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X / 2,                    0) + new Vector2(parentSizeinPixels.X / 2,                         0); break;
+                case PositionRelativeType.DownRight: relativePositioninPixels = new Vector2(-_relativePositionInPixels.X,  _relativePositionInPixels.Y) - new Vector2(_sizeInPixels.X    ,                    0) + new Vector2(parentSizeinPixels.X    ,                         0); break;
             }
-            _matrix =  
-                Matrix4.Identity 
-                * Matrix4.CreateScale(new Vector3(_sizeInWindows.X, _sizeInWindows.Y, 1))
-                * Matrix4.CreateTranslation(new Vector3(relativePosition.X, relativePosition.Y, 0)) 
-                * Matrix4.CreateRotationZ(parentRotation + _rotation)
-                * Matrix4.CreateTranslation(parentWindowPosition.X, parentWindowPosition.Y, 0);
-            var pos = _matrix.ExtractTranslation();
-            _positionInWindows = new Vector2(pos.X,pos.Y);
-            _postionInPixels = ((_positionInWindows / 2f) + Vector2.One * 0.5f) * _windowNode.Size;
+            _matrixInPixels =
+                Matrix4.Identity
+                * Matrix4.CreateScale(new Vector3(_sizeInPixels.X, _sizeInPixels.Y, 1))
+                * Matrix4.CreateTranslation(new Vector3(-_sizeInPixels.X/2f, -_sizeInPixels.Y/2f, 0))
+                * Matrix4.CreateRotationZ(_rotation)
+                * Matrix4.CreateTranslation(new Vector3(_sizeInPixels.X / 2f, _sizeInPixels.Y / 2f, 0))
+                * Matrix4.CreateTranslation(new Vector3(relativePositioninPixels.X, relativePositioninPixels.Y, 0))
+                * Matrix4.CreateRotationZ(parentRotation)
+                * Matrix4.CreateTranslation(parentPixelPosition.X, parentPixelPosition.Y, 0)
+                ;
+            _matrixInWindows = _matrixInPixels * Matrix4.CreateScale(2f / _windowNode.Size.X, 2f / _windowNode.Size.Y, 1) * Matrix4.CreateTranslation(-1,-1,0);
+            var pos1 = _matrixInPixels.ExtractTranslation();
+            _postionInPixels = new Vector2(pos1.X, pos1.Y);
+            var pos2 = _matrixInWindows.ExtractTranslation();
+            _positionInWindows = new Vector2(pos2.X,pos2.Y);
         }
 
         private Vector2 _sizeInPixels = Vector2.Zero;
@@ -155,17 +165,26 @@ namespace OpenGLAbstraction.Core.Objects
             }
         }
 
+        public Transform2D(Transform2D parent, Vector2 pixelPosition, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft)
+            : this(parent._windowNode, pixelPosition, Vector2.Zero, 0f, positionRelativeType) { this.Parent = parent; }
+        public Transform2D(Transform2D parent, Vector2 pixelPosition, Vector2 pixelSize, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft)
+            : this(parent._windowNode, pixelPosition, pixelSize, 0f, positionRelativeType) { this.Parent = parent; }
+        public Transform2D(Transform2D parent, Vector2 pixelPosition, Vector2 pixelSize, float rotation, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft)
+            : this(parent._windowNode, pixelPosition, pixelSize, rotation, positionRelativeType) { this.Parent = parent; }
+
 
         public Transform2D(WindowNode windowNode, Vector2 pixelPosition, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft) 
-            : this(windowNode, pixelPosition, Vector2.Zero, positionRelativeType) { }
+            : this(windowNode, pixelPosition, Vector2.Zero, 0f, positionRelativeType) { }
         public Transform2D(WindowNode windowNode, Vector2 pixelPosition, Vector2 pixelSize, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft) 
             : this(windowNode, pixelPosition, pixelSize, 0f, positionRelativeType) { }
         public Transform2D(WindowNode windowNode, Vector2 pixelPosition, Vector2 pixelSize, float rotation, PositionRelativeType positionRelativeType = PositionRelativeType.DownLeft) 
         {
             _windowNode = windowNode;
-            PositionRelativeType = positionRelativeType;
-            SizeInPixels = pixelSize;
-            RelativePositionInPixels = pixelPosition;
+            _positionRelativeType = positionRelativeType;
+            _sizeInPixels = pixelSize;
+            _relativePositionInPixels = pixelPosition;
+            _rotation = rotation;
+            Update();
         }
     }
 }
